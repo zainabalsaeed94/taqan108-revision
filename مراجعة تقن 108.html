@@ -1,0 +1,825 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مراجعة بايثون 🐍</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0d1a;--surface:#13132b;--card:#1a1a35;--border:#2a2a55;--accent:#7c3aed;--accent2:#06b6d4;--accent3:#10b981;--text:#e2e8f0;--muted:#94a3b8;--code-bg:#0a0a18}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,58,237,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.orb{position:fixed;border-radius:50%;filter:blur(120px);opacity:.15;pointer-events:none;z-index:0}
+.orb1{width:600px;height:600px;background:var(--accent);top:-200px;right:-200px}
+.orb2{width:400px;height:400px;background:var(--accent2);bottom:-100px;left:-100px}
+.container{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:20px}
+header{text-align:center;padding:40px 20px 20px;position:relative;z-index:1}
+.logo{font-size:4.5rem;animation:float 3s ease-in-out infinite;display:inline-block}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+header h1{font-size:2.6rem;font-weight:900;background:linear-gradient(135deg,#a78bfa,#06b6d4,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:8px 0 4px}
+header p{color:var(--muted);font-size:1rem}
+.topics{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0}
+.topic-tag{background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);color:#a78bfa;padding:4px 13px;border-radius:20px;font-size:.82rem;font-family:'Fira Code',monospace}
+/* INFO */
+#info-screen{animation:fadeIn .5s ease}
+.info-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:40px;max-width:520px;margin:0 auto}
+.info-card h2{font-size:1.6rem;font-weight:900;text-align:center;margin-bottom:8px;color:#a78bfa}
+.info-card p{text-align:center;color:var(--muted);margin-bottom:28px;font-size:.95rem}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:.9rem;font-weight:700;color:var(--muted);margin-bottom:8px}
+.form-group input,.form-group select{width:100%;background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:13px 16px;color:var(--text);font-family:'Cairo',sans-serif;font-size:1rem;outline:none;transition:border-color .25s}
+.form-group input:focus,.form-group select:focus{border-color:var(--accent)}
+.form-group select option{background:var(--surface)}
+/* LEVEL */
+#level-screen{display:none;animation:fadeIn .5s ease}
+.level-title{text-align:center;font-size:1.4rem;font-weight:700;margin-bottom:28px;color:var(--muted)}
+.level-title span{color:var(--text)}
+.levels-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-bottom:30px}
+.level-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:28px 22px;text-align:center;cursor:pointer;transition:all .3s cubic-bezier(.34,1.56,.64,1)}
+.level-card:hover{transform:translateY(-6px) scale(1.02)}
+.level-card.easy:hover{border-color:#10b981;box-shadow:0 0 30px rgba(16,185,129,.25),0 20px 40px rgba(0,0,0,.4)}
+.level-card.medium:hover{border-color:#f59e0b;box-shadow:0 0 30px rgba(245,158,11,.25),0 20px 40px rgba(0,0,0,.4)}
+.level-card.hard:hover{border-color:#ef4444;box-shadow:0 0 30px rgba(239,68,68,.25),0 20px 40px rgba(0,0,0,.4)}
+.level-icon{font-size:2.8rem;margin-bottom:12px}
+.level-name{font-size:1.4rem;font-weight:900;margin-bottom:7px}
+.level-card.easy .level-name{color:#10b981}.level-card.medium .level-name{color:#f59e0b}.level-card.hard .level-name{color:#ef4444}
+.level-desc{color:var(--muted);font-size:.88rem;line-height:1.6}
+.level-qs{display:inline-block;margin-top:10px;padding:3px 13px;border-radius:12px;font-size:.78rem;font-weight:700}
+.level-card.easy .level-qs{background:rgba(16,185,129,.15);color:#10b981}
+.level-card.medium .level-qs{background:rgba(245,158,11,.15);color:#f59e0b}
+.level-card.hard .level-qs{background:rgba(239,68,68,.15);color:#ef4444}
+/* QUIZ */
+#quiz-screen{display:none;animation:fadeIn .5s ease}
+.quiz-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px}
+.quiz-info{display:flex;align-items:center;gap:10px}
+.level-badge{padding:5px 14px;border-radius:20px;font-size:.83rem;font-weight:700}
+.badge-easy{background:rgba(16,185,129,.2);color:#10b981;border:1px solid rgba(16,185,129,.3)}
+.badge-medium{background:rgba(245,158,11,.2);color:#f59e0b;border:1px solid rgba(245,158,11,.3)}
+.badge-hard{background:rgba(239,68,68,.2);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
+.q-counter{color:var(--muted);font-size:.88rem}.q-counter span{color:var(--text);font-weight:700}
+.prog-wrap{background:var(--border);border-radius:10px;height:8px;margin-bottom:26px;overflow:hidden}
+.prog-bar{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s cubic-bezier(.34,1.56,.64,1)}
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;margin-bottom:18px}
+.q-topic{display:inline-block;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);color:#a78bfa;padding:3px 12px;border-radius:12px;font-size:.78rem;font-family:'Fira Code',monospace;margin-bottom:13px}
+.q-text{font-size:1.1rem;font-weight:600;line-height:1.7;margin-bottom:18px}
+.code-block{background:var(--code-bg);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin:13px 0;font-family:'Courier New',Courier,monospace;font-size:.9rem;color:#a78bfa;white-space:pre;overflow-x:auto;direction:ltr;text-align:left;line-height:1.6;font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.options{display:grid;gap:10px}
+.option{background:var(--surface);border:2px solid var(--border);border-radius:13px;padding:13px 18px;cursor:pointer;transition:all .25s ease;display:flex;align-items:center;gap:12px;font-size:.93rem;font-family:'Courier New',Courier,monospace;direction:ltr;text-align:left;font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.option:hover:not(.disabled){border-color:var(--accent);background:rgba(124,58,237,.1);transform:translateX(-3px)}
+.opt-letter{width:30px;height:30px;border-radius:7px;background:var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;flex-shrink:0;transition:all .25s}
+.option.correct{border-color:#10b981;background:rgba(16,185,129,.1)}.option.correct .opt-letter{background:#10b981;color:#fff}
+.option.wrong{border-color:#ef4444;background:rgba(239,68,68,.1)}.option.wrong .opt-letter{background:#ef4444;color:#fff}
+.option.disabled{cursor:default}
+.explain{display:none;background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.25);border-radius:13px;padding:14px 18px;margin-top:14px;color:#67e8f9;font-size:.88rem;line-height:1.7;animation:fadeIn .3s ease}
+.explain.show{display:block}.explain strong{color:#06b6d4}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:12px 26px;border-radius:13px;border:none;cursor:pointer;font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:700;transition:all .3s cubic-bezier(.34,1.56,.64,1)}
+.btn-p{background:linear-gradient(135deg,var(--accent),#5b21b6);color:#fff;box-shadow:0 4px 20px rgba(124,58,237,.3)}
+.btn-p:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 8px 30px rgba(124,58,237,.4)}
+.btn-s{background:var(--card);border:1px solid var(--border);color:var(--muted)}
+.btn-s:hover{border-color:var(--accent);color:var(--text)}
+.btn-g{background:linear-gradient(135deg,#059669,#10b981);color:#fff;box-shadow:0 4px 20px rgba(16,185,129,.3)}
+.btn-g:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 8px 30px rgba(16,185,129,.4)}
+.quiz-footer{display:flex;justify-content:space-between;align-items:center;margin-top:18px;flex-wrap:wrap;gap:10px}
+.score-mini{color:var(--muted);font-size:.88rem}.score-mini span{color:#10b981;font-weight:700}
+/* RESULT */
+#result-screen{display:none;animation:fadeIn .5s ease;text-align:center}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:45px 38px;position:relative;overflow:hidden}
+.result-card::before{content:'';position:absolute;top:-50%;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(124,58,237,.1),transparent 70%)}
+.res-emoji{font-size:4.5rem;margin-bottom:18px;animation:float 3s ease-in-out infinite}
+.res-title{font-size:2rem;font-weight:900;margin-bottom:10px}
+.res-sub{color:var(--muted);font-size:1rem;margin-bottom:30px}
+.score-disp{display:inline-flex;flex-direction:column;align-items:center;background:var(--surface);border:2px solid var(--border);border-radius:20px;padding:22px 45px;margin-bottom:25px}
+.score-num{font-size:3.5rem;font-weight:900;background:linear-gradient(135deg,#a78bfa,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.score-lbl{color:var(--muted);font-size:.88rem;margin-top:4px}
+.stats-row{display:flex;gap:16px;justify-content:center;margin-bottom:30px;flex-wrap:wrap}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:14px 22px;text-align:center;min-width:100px}
+.stat-val{font-size:1.6rem;font-weight:900}.stat-lbl2{color:var(--muted);font-size:.78rem;margin-top:2px}
+.s-c .stat-val{color:#10b981}.s-w .stat-val{color:#ef4444}
+.res-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+/* CERT */
+#cert-screen{display:none;animation:fadeIn .5s ease;text-align:center}
+.cert-wrap{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;margin-bottom:22px;overflow:hidden}
+.cert-wrap h3{font-size:1.1rem;color:var(--muted);margin-bottom:18px}
+#cert-canvas{max-width:100%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5);display:block;margin:0 auto}
+.cert-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+/* ANIM */
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes bounceIn{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+.shake{animation:shake .3s ease}.bounce-in{animation:bounceIn .4s ease forwards}
+.confetti-piece{position:fixed;border-radius:2px;animation:cffall 3s ease-in forwards;z-index:999}
+@keyframes cffall{0%{transform:translateY(-100px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+@media(max-width:600px){header h1{font-size:1.9rem}.level-card,.q-card,.result-card,.info-card{padding:20px 16px}.score-num{font-size:2.8rem}}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div><div class="orb orb2"></div>
+<div class="container">
+<header>
+  <div class="logo">🐍</div>
+  <h1>مراجعة Python</h1>
+  <p>اختبر معرفتك بلغة البرمجة الأكثر شهرة في العالم</p>
+  <div class="topics">
+    <span class="topic-tag">if / else</span><span class="topic-tag">for in list</span>
+    <span class="topic-tag">for in string</span><span class="topic-tag">datetime</span><span class="topic-tag">random</span>
+  </div>
+</header>
+
+<!-- ① INFO -->
+<div id="info-screen">
+  <div class="info-card">
+    <h2>👋 أهلاً بك!</h2>
+    <p>أدخل بياناتك لتبدأ الاختبار وتحصل على شهادتك</p>
+    <div class="form-group">
+      <label>الاسم الكامل</label>
+      <input type="text" id="sname" placeholder="مثال: محمد أحمد" maxlength="40">
+    </div>
+    <div class="form-group">
+      <label>اسم المدرسة / الجامعة</label>
+      <input type="text" id="sschool" placeholder="مثال: مدرسة الأمل الثانوية" maxlength="60">
+    </div>
+    <div class="form-group">
+      <label>الصف الدراسي</label>
+      <input type="text" id="sgrade" placeholder="مثال: الصف الثاني ثانوي" maxlength="50">
+    </div>
+    <button class="btn btn-p" style="width:100%;margin-top:8px" onclick="submitInfo()">ابدأ الاختبار ←</button>
+  </div>
+</div>
+
+<!-- ② LEVELS -->
+<div id="level-screen">
+  <p class="level-title">اختر <span>مستوى الاختبار</span></p>
+  <div class="levels-grid">
+    <div class="level-card easy" onclick="startQuiz('easy')">
+      <div class="level-icon">🌱</div><div class="level-name">مبتدئ</div>
+      <div class="level-desc">أسئلة أساسية لفهم المفاهيم الأولى في بايثون</div>
+      <span class="level-qs">10 أسئلة</span>
+    </div>
+    <div class="level-card medium" onclick="startQuiz('medium')">
+      <div class="level-icon">⚡</div><div class="level-name">متوسط</div>
+      <div class="level-desc">تطبيقات عملية تتطلب تفكيراً برمجياً أعمق</div>
+      <span class="level-qs">10 أسئلة</span>
+    </div>
+    <div class="level-card hard" onclick="startQuiz('hard')">
+      <div class="level-icon">🔥</div><div class="level-name">متقدم</div>
+      <div class="level-desc">تحديات معقدة لاختبار إتقانك الكامل للمفاهيم</div>
+      <span class="level-qs">10 أسئلة</span>
+    </div>
+  </div>
+</div>
+
+<!-- ③ QUIZ -->
+<div id="quiz-screen">
+  <div class="quiz-header">
+    <div class="quiz-info">
+      <span class="level-badge" id="lbadge"></span>
+      <span class="q-counter">السؤال <span id="qcur">1</span> من <span id="qtot">10</span></span>
+    </div>
+    <button class="btn btn-s" onclick="showScreen('level-screen')" style="padding:7px 14px;font-size:.82rem">↩ العودة</button>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="pbar"></div></div>
+  <div class="q-card" id="qcard">
+    <div class="q-topic" id="qtopic"></div>
+    <div class="q-text" id="qtext"></div>
+    <div class="code-block" id="qcode" style="display:none"></div>
+    <div class="options" id="qopts"></div>
+    <div class="explain" id="qexpl"></div>
+  </div>
+  <div class="quiz-footer">
+    <div class="score-mini">الإجابات الصحيحة: <span id="smini">0</span></div>
+    <button class="btn btn-p" id="nbtn" onclick="nextQ()" style="display:none">السؤال التالي ←</button>
+  </div>
+</div>
+
+<!-- ④ RESULT -->
+<div id="result-screen">
+  <div class="result-card">
+    <div class="res-emoji" id="remoji">🏆</div>
+    <div class="res-title" id="rtitle"></div>
+    <div class="res-sub" id="rsub"></div>
+    <div class="score-disp">
+      <div class="score-num" id="fscore">0/10</div>
+      <div class="score-lbl">النتيجة النهائية</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box s-c"><div class="stat-val" id="stc">0</div><div class="stat-lbl2">✅ صحيح</div></div>
+      <div class="stat-box s-w"><div class="stat-val" id="stw">0</div><div class="stat-lbl2">❌ خطأ</div></div>
+      <div class="stat-box"><div class="stat-val" id="stpct" style="color:#a78bfa">0%</div><div class="stat-lbl2">📊 النسبة</div></div>
+    </div>
+    <div class="res-btns">
+      <button class="btn btn-g" onclick="showCert()">🎓 شهادتي</button>
+      <button class="btn btn-p" onclick="retryQ()">🔄 إعادة</button>
+      <button class="btn btn-s" onclick="showScreen('level-screen')">🏠 مستوى آخر</button>
+    </div>
+  </div>
+</div>
+
+<!-- ⑤ CERTIFICATE -->
+<div id="cert-screen">
+  <div class="cert-wrap">
+    <h3>🎓 شهادتك جاهزة — اضغط تحميل لحفظها على جهازك</h3>
+    <canvas id="cert-canvas"></canvas>
+  </div>
+  <div class="cert-btns">
+    <button class="btn btn-g" onclick="dlCert()">⬇️ تحميل الشهادة (PNG)</button>
+    <button class="btn btn-p" onclick="retryQ()">🔄 إعادة المستوى</button>
+    <button class="btn btn-s" onclick="showScreen('level-screen')">🏠 مستوى آخر</button>
+  </div>
+</div>
+</div><!-- /container -->
+
+<script>
+/* ---- HELPERS ---- */
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function randPick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function shuffle(arr){let a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+// wrap correct answer among 3 distractors, return {o,a}
+function mkOpts(correct, distractors){
+  // ensure we always have exactly 3 distractors (pad with fallbacks if needed)
+  const fallbacks=['خطأ في الكود','لا شيء','None','غير محدد'];
+  let dis=[...distractors].filter(d=>String(d)!==String(correct));
+  // pad if not enough
+  let fi=0;
+  while(dis.length<3){dis.push(fallbacks[fi%fallbacks.length]+'_'+fi);fi++;}
+  dis=shuffle(dis).slice(0,3);
+  const pos=rnd(0,3);
+  const o=[...dis];o.splice(pos,0,String(correct));
+  return{o,a:pos};
+}
+
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+// known (year,month,day)->day-of-week for fixed dates used in questions
+function dayName(y,m,d){const ds=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];return ds[new Date(y,m-1,d).getDay()];}
+
+/* ---- DYNAMIC QUESTION GENERATORS ---- */
+function makeGenerators(lvl){
+  const MN=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const DN=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+
+  const easy=[
+  ()=>({t:"datetime",q:"أكمل الفراغ: لطباعة تاريخ اليوم فقط نكتب:",
+    c:"from datetime import date\nprint( date. __________ )",
+    o:["date.now()","date.today()","date.current()","date.time()"],a:1,
+    e:"الدالة الصحيحة هي date.today() لعرض تاريخ اليوم فقط دون الوقت."}),
+  ()=>{
+    const y=rnd(2000,2015),m=rnd(1,12),d=rnd(1,28);
+    const ms=String(m).padStart(2,"0"),ds=String(d).padStart(2,"0");
+    const correct=y+"-"+ms+"-"+ds+" is my birthday";
+    const r=mkOpts(correct,["is my birthday "+y+"-"+ms+"-"+ds,ds+"/"+ms+"/"+y+" is my birthday","خطأ في الكود"]);
+    return{t:"datetime",q:"ما ناتج هذا الكود؟",
+      c:"from datetime import date\nBD = date("+y+", "+m+", "+d+")\nprint(BD, \"is my birthday\")",
+      o:r.o,a:r.a,e:"date("+y+","+m+","+d+") تُنشئ تاريخاً بالصيغة YYYY-MM-DD، فيطبع: "+correct};
+  },
+  ()=>{
+    const y=rnd(2000,2023),m=rnd(1,12),d=rnd(1,28);
+    const attr=randPick(["year","month","day"]);
+    const val=attr==="year"?y:attr==="month"?m:d;
+    const ms=String(m).padStart(2,"0"),ds=String(d).padStart(2,"0");
+    const arAttr=attr==="year"?"السنة":attr==="month"?"الشهر":"اليوم";
+    const r=mkOpts(String(val),[y+"-"+ms+"-"+ds,String(attr==="year"?m:attr==="month"?y:m),String(val+1)]);
+    return{t:"datetime",q:"ما ناتج هذا الكود؟",
+      c:"from datetime import date\nx = date("+y+", "+m+", "+d+")\nprint( x."+attr+" )",
+      o:r.o,a:r.a,e:"الخاصية ."+attr+" تُرجع "+arAttr+" فقط من التاريخ. القيمة هي "+val+"."};
+  },
+  ()=>{
+    const rows=[[2026,2,1,"Sunday"],[2025,1,1,"Wednesday"],[2024,3,1,"Friday"],[2023,7,4,"Tuesday"],[2022,11,20,"Sunday"]];
+    const row=randPick(rows);const y=row[0],m=row[1],d=row[2],dn=row[3];
+    const mn=MN[m-1];
+    const r=mkOpts(dn,[mn,String(y),String(d).padStart(2,"0")]);
+    return{t:"datetime",q:"ما ناتج هذا الكود؟",
+      c:"from datetime import date\nx = date("+y+", "+m+", "+d+")\nprint( x.strftime(\"%A\") )",
+      o:r.o,a:r.a,e:"%A في strftime تعطي اسم اليوم بالإنجليزية. "+d+"/"+m+"/"+y+" كان يوم "+dn+"."};
+  },
+  ()=>{
+    const a=rnd(2,15),b=a+rnd(3,8);
+    const correct=a+" إلى "+b+" شاملاً الحدين";
+    const r=mkOpts(correct,[a+" إلى "+(b-1)+" فقط",(a+1)+" إلى "+(b-1)+" فقط","رقم عشري بين "+a+" و "+b]);
+    return{t:"random",q:"ما نطاق الأرقام الممكنة لهذا الكود؟",
+      c:"import random\nx = random.randint("+a+", "+b+")\nprint(x)",
+      o:r.o,a:r.a,e:"randint("+a+","+b+") يشمل الحدين، فالأرقام الممكنة من "+a+" حتى "+b+"."};
+  },
+  ()=>{
+    const x=rnd(5,20),add=rnd(2,6),y=x+add;
+    const r=mkOpts("بين "+x+" و "+y,["بين 0 و "+x,"بين "+x+" و "+add,"بين "+add+" و "+y]);
+    return{t:"random",q:"ما نطاق الأرقام العشوائية الممكنة لـ z ؟",
+      c:"import random\nx = "+x+"\ny = x + "+add+"\nz = random.randint(x, y)\nprint(z)",
+      o:r.o,a:r.a,e:"x="+x+" و y=x+"+add+"="+y+"، لذا randint(x,y) يعطي أرقاماً بين "+x+" و "+y+" شاملاً."};
+  },
+  ()=>{
+    const n=rnd(3,9);
+    const r=mkOpts(String(n-1),[String(n),String(n-2),"0"]);
+    return{t:"random",q:"ما آخر عدد عشوائي ممكن لهذا الكود؟",
+      c:"import random\nx = random.randrange("+n+")\nprint(x)",
+      o:r.o,a:r.a,e:"randrange("+n+") يعطي أرقاماً من 0 إلى "+(n-1)+" فقط (لا تشمل "+n+"). آخر رقم ممكن هو "+(n-1)+"."};
+  },
+  ()=>{
+    const threshold=randPick([40,50,60,70,80]);
+    const delta=rnd(5,20);
+    const val=rnd(0,1)===0?threshold+delta:threshold-delta;
+    const passes=val>threshold;
+    const correct=passes?"pass":"fail";
+    const r=mkOpts(correct,[passes?"fail":"pass",String(val),"خطأ"]);
+    return{t:"if / else",q:"ما ناتج هذا الكود؟",
+      c:"degree = "+val+"\nif degree > "+threshold+":\n    print(\"pass\")\nelse:\n    print(\"fail\")",
+      o:r.o,a:r.a,e:val+(passes?" أكبر":" ليس أكبر")+" من "+threshold+"، لذا يطبع "+correct+"."};
+  },
+  ()=>{
+    const pools=[["Bahrain","Kuwait","KSA","UAE","Qatar","Oman"],["apple","banana","mango","grape"],["red","blue","green","yellow","white"],["Python","Java","C++"]];
+    const lst=randPick(pools);const n=lst.length;
+    const correct="يطبع كل عنصر في سطر منفصل ("+n+" أسطر)";
+    const r=mkOpts(correct,["يطبع كل العناصر في سطر واحد","يطبع \""+lst[0]+"\" فقط","يطبع خطأ"]);
+    return{t:"for in list",q:"ما ناتج هذا الكود؟",
+      c:"lst = "+JSON.stringify(lst)+"\nfor i in lst:\n    print(i)",
+      o:r.o,a:r.a,e:"حلقة for in list تطبع كل عنصر في سطر منفصل. القائمة تحتوي "+n+" عناصر فتُطبع "+n+" أسطر."};
+  },
+  ()=>{
+    const words=["Bahrain","Kuwait","Manama","Python","school","random","Hello"];
+    const w=randPick(words);const n=w.length;
+    const r=mkOpts(n+" أسطر",[(n-1)+" أسطر",(n+1)+" أسطر","سطر واحد"]);
+    return{t:"for in string",q:"كم سطراً يطبع هذا الكود؟",
+      c:"for i in \""+w+"\": \n    print(i)",
+      o:r.o,a:r.a,e:"كلمة \""+w+"\" تحتوي على "+n+" أحرف، فتطبع "+n+" أسطر كل منها حرف واحد."};
+  }];
+
+  const medium=[
+  ()=>{
+    const m=rnd(1,12),y=rnd(2010,2026),d=rnd(1,28);
+    const mn=MN[m-1];
+    const r=mkOpts(mn,[String(y),String(d).padStart(2,"0"),DN[rnd(0,6)]]);
+    return{t:"datetime",q:"ما ناتج هذا الكود؟",
+      c:"from datetime import date\nx = date("+y+", "+m+", "+d+")\nprint( x.strftime(\"%B\") )",
+      o:r.o,a:r.a,e:"%B في strftime تعطي اسم الشهر بالإنجليزية. الشهر "+m+" هو "+mn+"."};
+  },
+  ()=>{
+    const y=rnd(1995,2020),m=rnd(1,12),d=rnd(1,28);
+    const r=mkOpts(String(m),[String(y),String(d),MN[m-1]]);
+    return{t:"datetime",q:"ما ناتج هذا الكود؟",
+      c:"from datetime import date\nA = date("+y+", "+m+", "+d+")\nprint(A.month)",
+      o:r.o,a:r.a,e:"الخاصية .month تُرجع رقم الشهر فقط. الشهر في التاريخ هو "+m+"."};
+  },
+  ()=>{
+    const a=rnd(5,20),b=a+rnd(2,4);
+    const poss=[];for(let i=a;i<b;i++)poss.push(i);
+    const correct=poss.join(" أو ");
+    const r=mkOpts(correct,[poss.join(" أو ")+" أو "+b,poss.length>1?poss.slice(1).join(" أو "):(a+1)+"",a+" فقط"]);
+    return{t:"random",q:"ما الأرقام الممكنة لهذا الكود؟",
+      c:"import random\nx = random.randrange("+a+", "+b+")\nprint(x)",
+      o:r.o,a:r.a,e:"randrange("+a+","+b+") لا تشمل "+b+"، فالأرقام الممكنة هي: "+correct+"."};
+  },
+  ()=>{
+    const step=randPick([2,3,5]);const a=randPick([0,2,3,5]);const b=a+step*rnd(3,6);
+    const poss=[];for(let i=a;i<b;i+=step)poss.push(i);
+    const correct=poss.join("-");
+    const r=mkOpts(correct,[[...poss,b].join("-"),poss.length>1?poss.slice(1).join("-"):"1",(a+1)+"-"+(a+1+step)]);
+    return{t:"random",q:"ما الأرقام الممكنة لهذا الكود؟",
+      c:"import random\nx = random.randrange("+a+", "+b+", "+step+")\nprint(x)",
+      o:r.o,a:r.a,e:"randrange("+a+","+b+","+step+") يبدأ من "+a+" بخطوة "+step+" ولا يشمل "+b+": الأرقام هي "+correct+"."};
+  },
+  ()=>{
+    const rows=[[92,"A student"],[85,"B student"],[75,"C student"],[55,"need more effort!"]];
+    const row=randPick(rows);const grade=row[0],result=row[1];
+    const wrongs=["A student","B student","C student","need more effort!"].filter(x=>x!==result);
+    const r=mkOpts(result,wrongs);
+    return{t:"if / else",q:"ما ناتج هذا الكود؟",
+      c:"grade = "+grade+"\nif grade >= 90:\n    print(\"A student\")\nelif grade >= 80:\n    print(\"B student\")\nelif grade >= 70:\n    print(\"C student\")\nelse:\n    print(\"need more effort!\")",
+      o:r.o,a:r.a,e:"grade="+grade+" → يتحقق الشرط المناسب فيطبع: "+result+"."};
+  },
+  ()=>{
+    const rows=[[7,7,"price < 10"],[12,+(12-12*0.1).toFixed(1),"price < 15"],[18,+(18-18*0.2).toFixed(1),"else"]];
+    const row=randPick(rows);const price=row[0],result=row[1],reason=row[2];
+    const r=mkOpts(String(result),[String(price),String(+(price-price*0.3).toFixed(1)),"خطأ برمجي"]);
+    return{t:"if / else",q:"ما ناتج هذا الكود؟",
+      c:"price = "+price+"\nif price < 10:\n    print(price)\nelif price < 15:\n    print(price - (price * 0.1))\nelse:\n    print(price - (price * 0.2))",
+      o:r.o,a:r.a,e:"price="+price+" → يتحقق شرط ("+reason+")، فيطبع "+result+"."};
+  },
+  ()=>{
+    const thresh=randPick([5,8,10,12]);
+    const n1=thresh+rnd(3,10),n2=thresh-rnd(1,4),n3=thresh+rnd(1,5),n4=Math.max(1,thresh-rnd(2,thresh-1));
+    const lst=[n1,n2,n3,n4];
+    const add=randPick([2,3,5]);
+    const above=lst.filter(x=>x>thresh);
+    const correct=above.map(x=>x+add).join(" ثم ");
+    const d1=lst.map(x=>x+add).join(" ثم ");
+    const d2=above.length?above.join(" ثم "):"لا يوجد";
+    const d3=lst.filter(x=>x<=thresh).join(" ثم ")||"لا يوجد";
+    const r=mkOpts(correct,[d1,d2,d3]);
+    return{t:"for in list",q:"ما ناتج هذا الكود؟",
+      c:"A = "+JSON.stringify(lst)+"\nfor i in A:\n    if i > "+thresh+":\n        print(i + "+add+")",
+      o:r.o,a:r.a,e:"الأرقام الأكبر من "+thresh+" هي: "+above.join(",")+" ويُضاف لها "+add+"، فالناتج: "+correct+"."};
+  },
+  ()=>{
+    const div=randPick([2,3,4]);const base=div*rnd(2,5);
+    const lst=[base,base*2,base*3,base*4];
+    const results=lst.map(x=>x===base?String(x):String(+(x/div)));
+    const correct=results.join(" ثم ");
+    const r=mkOpts(correct,[lst.map(x=>String(+(x/div))).join(" ثم "),lst.join(" ثم "),results.slice(1).join(" ثم ")]);
+    return{t:"for in list",q:"ما ناتج هذا الكود؟",
+      c:"num = "+JSON.stringify(lst)+"\nfor c in num:\n    if c > "+base+":\n        print(c / "+div+")\n    else:\n        print(c)",
+      o:r.o,a:r.a,e:base+" لا يحقق c>"+base+" فيطبع "+base+". البقية تُقسم على "+div+": "+results.join("، ")+"."};
+  },
+  ()=>{
+    const pairs=[["Manama","a",3],["Bahrain","a",2],["Alabama","a",4],["banana","a",3],["Python","n",1],["Mississippi","s",4]];
+    const row=randPick(pairs);const word=row[0],ch=row[1],count=row[2];
+    const r=mkOpts("The number of char."+ch+" is "+count,["The number of char."+ch+" is "+(count+1),"The number of char."+ch+" is "+(count-1),"The number of char."+ch+" is 0"]);
+    return{t:"for in string",q:"ما ناتج هذا الكود؟",
+      c:"counter = 0\nword = \""+word+"\"\nfor i in word:\n    if i == \""+ch+"\":\n        counter = counter + 1\nprint(\"The number of char."+ch+" is\", counter)",
+      o:r.o,a:r.a,e:"في كلمة \""+word+"\"، الحرف '"+ch+"' يظهر "+count+" مرات."};
+  },
+  ()=>{
+    const strs=["bahrain is beautiful","python is great","hello world","coding is fun"];
+    const s=randPick(strs);
+    const varName=randPick(["a","c","x","letter"]);
+    const ch=randPick(["i","a","o","e"]);
+    const count=[...s].filter(x=>x===ch).length;
+    const correctOpt="if "+varName+" == \""+ch+"\"";
+    const wrongOpts=["if x == \""+ch+"\"","if c == \""+ch+"\"","if i == \""+ch+"\"","if counter == \""+ch+"\""].filter(x=>x!==correctOpt);
+    const r=mkOpts(correctOpt,wrongOpts);
+    return{t:"for in string",q:"أكمل الفراغ: لعدّ حرف '"+ch+"' في المتغير x، أيٌّ من التالي صحيح؟",
+      c:"x = \""+s+"\"\nc = 0\nfor "+varName+" in x:\n    if ____ == \""+ch+"\":\n        c = c + 1\nprint(c)",
+      o:r.o,a:r.a,e:"متغير التكرار هو "+varName+"، لذا الشرط الصحيح هو: if "+varName+" == \""+ch+"\". الناتج: "+count+"."};
+  }];
+
+  const hard=[
+  ()=>{
+    const m=rnd(1,12),y=rnd(2010,2026),d=rnd(1,28);
+    const mn=MN[m-1];
+    const r=mkOpts(mn,[MN[m%12],String(y),String(d).padStart(2,"0")]);
+    return{t:"datetime",q:"ما ناتج هذا الكود؟",
+      c:"from datetime import date\nA = date("+y+", "+m+", "+d+")\nprint( A.strftime(\"%B\") )",
+      o:r.o,a:r.a,e:"%B تعطي اسم الشهر بالإنجليزية. الشهر "+m+" هو "+mn+"."};
+  },
+  ()=>({t:"datetime",q:"أي كود يطبع التاريخ والوقت معاً؟",c:null,
+    o:["from datetime import date\nprint(date.today())","from datetime import datetime\nprint(datetime.now())","from datetime import date\nprint(date.now())","import datetime\nprint(datetime.today())"],a:1,
+    e:"للتاريخ والوقت معاً: from datetime import datetime ثم datetime.now()."}),
+  ()=>{
+    const a=rnd(1,10),b=a+rnd(3,10);
+    const r=mkOpts("بين "+a+" و "+b+" شاملاً",["بين "+a+" و "+(b-1)+" فقط","بين 0 و "+b,"دائماً يطبع "+Math.floor((a+b)/2)]);
+    return{t:"random",q:"ما الوصف الصحيح لناتج هذا الكود؟",
+      c:"import random\nx = random.randint("+a+", "+b+")\nprint(x)",
+      o:r.o,a:r.a,e:"randint("+a+","+b+") يشمل الحدين، فالأرقام الممكنة بين "+a+" و "+b+"."};
+  },
+  ()=>{
+    const step=randPick([2,3,5]);const a=randPick([0,2,4,6]);const b=a+step*rnd(3,5);
+    const poss=[];for(let i=a;i<b;i+=step)poss.push(i);
+    const correct=poss.join("-");
+    const r=mkOpts(correct,[[...poss,b].join("-"),poss.length>1?poss.slice(1).join("-"):"1",(a+1)+"-"+(a+1+step)]);
+    return{t:"random",q:"ما الأرقام الممكنة في هذا الكود؟",
+      c:"import random\nx = random.randrange("+a+", "+b+", "+step+")\nprint(x)",
+      o:r.o,a:r.a,e:"randrange("+a+","+b+","+step+"): يبدأ من "+a+" بخطوة "+step+" ولا يشمل "+b+". الأرقام: "+correct+"."};
+  },
+  ()=>{
+    const odds=[11,13,15,17,19,21];const x=randPick(odds);
+    const y=x/2;
+    const correct=y>10?String(+(y-2)):String(Math.round(y));
+    const branch=y>10?"y > 10 → يطبع y - 2 = "+(+(y-2)):"y لا يحقق y>10 ولا y==10 → يطبع round("+y+") = "+Math.round(y);
+    const r=mkOpts(correct,[String(y),String(Math.round(y)+1),"خطأ"]);
+    return{t:"if / else",q:"ما ناتج هذا الكود؟",
+      c:"x = "+x+"\ny = x / 2\nif y > 10:\n    print(y - 2)\nelif y == 10:\n    print(y)\nelse:\n    print(round(y))",
+      o:r.o,a:r.a,e:"y = "+x+"/2 = "+y+". "+branch+"."};
+  },
+  ()=>{
+    const num=rnd(2,20);const isEven=num%2===0;
+    const correct=isEven?"عدد زوجي":"عدد فردي";
+    const r=mkOpts(correct,[isEven?"عدد فردي":"عدد زوجي","0","خطأ"]);
+    return{t:"if / else",q:"ما ناتج هذا الكود؟",
+      c:"num = "+num+"\nif num % 2 == 0:\n    print(\"عدد زوجي\")\nelse:\n    print(\"عدد فردي\")",
+      o:r.o,a:r.a,e:num+" % 2 = "+(num%2)+". "+(isEven?"الشرط محقق":"الشرط غير محقق")+" فيطبع: "+correct+"."};
+  },
+  ()=>{
+    const ch=randPick(["b","s","m","c","p"]);
+    const aw={b:["base","door","book","break","boat"],s:["sun","moon","star","sky","sea"],m:["map","door","moon","mat","cat"],c:["cat","dog","cup","car","tree"],p:["pen","book","python","pan","run"]};
+    const r=mkOpts("w[0] == '"+ch+"'",["w == '"+ch+"'","w[1] == '"+ch+"'","len(w) == '"+ch+"'"]);
+    return{t:"for in list",q:"أي شرط يطبع الكلمات التي تبدأ بحرف '"+ch+"' فقط؟",
+      c:"words = "+JSON.stringify(aw[ch])+"\nfor w in words:\n    if ______:\n        print(w)",
+      o:r.o,a:r.a,e:"w[0] يعطي أول حرف في الكلمة. نقارنه بـ '"+ch+"' لتحديد الكلمات التي تبدأ بهذا الحرف."};
+  },
+  ()=>{
+    const target=randPick([3,4,5,6]);
+    const pool=["free","door","tree","python","cat"];
+    const r=mkOpts("len(w) == "+target,["len(w) > "+target,"len(w) < "+target,"w == "+target]);
+    return{t:"for in list",q:"أي شرط يطبع الكلمات المكوّنة من "+target+" أحرف فقط؟",
+      c:"words = "+JSON.stringify(pool)+"\nfor w in words:\n    if ______:\n        print(w)",
+      o:r.o,a:r.a,e:"len(w) تعطي عدد أحرف الكلمة. للطباعة عند "+target+" أحرف فقط نكتب: if len(w) == "+target+"."};
+  },
+  ()=>{
+    const lst=[rnd(1,10),rnd(11,20),rnd(21,30),rnd(31,40)];
+    const correct=lst.join(" ثم ");
+    const r=mkOpts(correct,[lst.join(" ")+" في سطر واحد",lst[0]+" فقط","خطأ"]);
+    return{t:"for in list",q:"ما ناتج هذا الكود؟",
+      c:"grades = "+JSON.stringify(lst)+"\nfor i in grades:\n    print(i)",
+      o:r.o,a:r.a,e:"for in list تطبع كل عنصر في سطر مستقل: "+correct+"."};
+  },
+  ()=>{
+    const sub=randPick([1,2,3,5]);
+    const lst=[rnd(5,10),rnd(11,16),rnd(17,22),rnd(23,28)];
+    const results=lst.map(x=>x-sub);
+    const correct=results.join(" ثم ");
+    const r=mkOpts(correct,[lst.join(" ثم "),lst.map(x=>x+sub).join(" ثم "),"خطأ"]);
+    return{t:"for in list",q:"ما ناتج هذا الكود؟",
+      c:"n = "+JSON.stringify(lst)+"\nfor i in n:\n    print(i - "+sub+")",
+      o:r.o,a:r.a,e:"كل عنصر يُطرح منه "+sub+": "+lst.map((x,i)=>x+"-"+sub+"="+results[i]).join("، ")+". فيُطبع: "+correct+"."};
+  }];
+
+  return {easy,medium,hard}[lvl];
+}
+
+/* ---- BUILD QS FROM GENERATORS ---- */
+function buildQS(){
+  const out={easy:[],medium:[],hard:[]};
+  ["easy","medium","hard"].forEach(lvl=>{
+    makeGenerators(lvl).forEach(gen=>out[lvl].push(gen()));
+  });
+  return out;
+}
+
+/* ---- STATE ---- */
+let sName='',sGrade='',sSchool='',curLvl='',curQs=[],idx=0,sc=0,done=false,fSc=0,fTot=10;
+let QS=buildQS();
+
+/* ---- SCREEN ---- */
+function showScreen(id){
+  ['info-screen','level-screen','quiz-screen','result-screen','cert-screen'].forEach(s=>{
+    document.getElementById(s).style.display=(s===id)?'block':'none';
+  });
+}
+
+/* ---- INFO ---- */
+function submitInfo(){
+  sName=document.getElementById('sname').value.trim();
+  sSchool=document.getElementById('sschool').value.trim();
+  sGrade=document.getElementById('sgrade').value.trim();
+  if(!sName){alert('الرجاء إدخال اسمك 😊');return;}
+  if(!sSchool){alert('الرجاء إدخال اسم مدرستك 😊');return;}
+  if(!sGrade){alert('الرجاء إدخال صفك الدراسي 😊');return;}
+  showScreen('level-screen');
+}
+
+/* ---- QUIZ ---- */
+function startQuiz(lvl){
+  QS=buildQS(); // regenerate all questions fresh
+  curLvl=lvl;curQs=[...QS[lvl]];idx=0;sc=0;done=false;
+  showScreen('quiz-screen');
+  const nm={easy:'🌱 مبتدئ',medium:'⚡ متوسط',hard:'🔥 متقدم'};
+  const b=document.getElementById('lbadge');
+  b.textContent=nm[lvl];b.className='level-badge badge-'+lvl;
+  document.getElementById('qtot').textContent=curQs.length;
+  document.getElementById('smini').textContent='0';
+  renderQ();
+}
+
+function renderQ(){
+  done=false;
+  const q=curQs[idx];
+  document.getElementById('qcur').textContent=idx+1;
+  document.getElementById('pbar').style.width=((idx/curQs.length)*100)+'%';
+  document.getElementById('qtopic').textContent=q.t;
+  document.getElementById('qtext').textContent=q.q;
+  document.getElementById('nbtn').style.display='none';
+  document.getElementById('qexpl').className='explain';
+  const ce=document.getElementById('qcode');
+  if(q.c){ce.style.display='block';ce.textContent=q.c;}else{ce.style.display='none';}
+  const op=document.getElementById('qopts');op.innerHTML='';
+  ['A','B','C','D'].forEach((l,i)=>{
+    const d=document.createElement('div');
+    d.className='option';
+    d.innerHTML=`<span class="opt-letter">${l}</span><span>${q.o[i]}</span>`;
+    d.onclick=()=>pick(i,d);
+    op.appendChild(d);
+  });
+  const card=document.getElementById('qcard');
+  card.style.animation='none';
+  setTimeout(()=>{card.style.animation='fadeIn .4s ease';},10);
+}
+
+function pick(i,el){
+  if(done)return;done=true;
+  const q=curQs[idx];
+  document.querySelectorAll('.option').forEach(o=>o.classList.add('disabled'));
+  if(i===q.a){el.classList.add('correct','bounce-in');sc++;document.getElementById('smini').textContent=sc;}
+  else{el.classList.add('wrong','shake');document.querySelectorAll('.option')[q.a].classList.add('correct');}
+  const ex=document.getElementById('qexpl');
+  ex.innerHTML=`<strong>💡 التفسير:</strong> ${q.e}`;ex.classList.add('show');
+  const nb=document.getElementById('nbtn');
+  nb.textContent=idx===curQs.length-1?'📊 عرض النتيجة':'السؤال التالي ←';
+  nb.style.display='inline-flex';
+}
+
+function nextQ(){
+  idx++;
+  if(idx>=curQs.length)showResult();else renderQ();
+}
+
+/* ---- RESULT ---- */
+function showResult(){
+  fSc=sc;fTot=curQs.length;
+  const pct=Math.round(sc/fTot*100);
+  showScreen('result-screen');
+  document.getElementById('fscore').textContent=`${sc}/${fTot}`;
+  document.getElementById('stc').textContent=sc;
+  document.getElementById('stw').textContent=fTot-sc;
+  document.getElementById('stpct').textContent=pct+'%';
+  let em,tt,sb;
+  if(pct===100){em='🏆';tt='مثالي تماماً!';sb='أجبت على جميع الأسئلة. أنت محترف بايثون!';confetti();}
+  else if(pct>=80){em='🌟';tt='أداء ممتاز!';sb='نتيجة رائعة! تفوقك واضح في مفاهيم Python.';confetti();}
+  else if(pct>=60){em='👍';tt='جيد جداً!';sb='أداء جيد! مراجعة الأسئلة الخاطئة ستجعلك أفضل.';}
+  else if(pct>=40){em='📚';tt='استمر في التعلم!';sb='لديك أساس جيد، لكن تحتاج لمزيد من المراجعة.';}
+  else{em='💪';tt='لا تستسلم!';sb='راجع الدروس مجدداً وحاول مرة أخرى!';}
+  document.getElementById('remoji').textContent=em;
+  document.getElementById('rtitle').textContent=tt;
+  document.getElementById('rsub').textContent=sb;
+}
+
+function retryQ(){startQuiz(curLvl);}
+
+/* ---- CERTIFICATE ---- */
+function showCert(){
+  showScreen('cert-screen');
+  drawCert();
+}
+
+function drawCert(){
+  const cv=document.getElementById('cert-canvas');
+  const W=1122,H=794;cv.width=W;cv.height=H;
+  const c=cv.getContext('2d');
+
+  // BG
+  const bg=c.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#080818');bg.addColorStop(.5,'#100e38');bg.addColorStop(1,'#080818');
+  c.fillStyle=bg;c.fillRect(0,0,W,H);
+
+  // Corner glows
+  [[0,0],[W,0],[0,H],[W,H]].forEach(([cx,cy])=>{
+    const g=c.createRadialGradient(cx,cy,0,cx,cy,300);
+    g.addColorStop(0,'rgba(124,58,237,.18)');g.addColorStop(1,'rgba(0,0,0,0)');
+    c.fillStyle=g;c.fillRect(0,0,W,H);
+  });
+  // Center glow
+  const cg=c.createRadialGradient(W/2,H/2,0,W/2,H/2,380);
+  cg.addColorStop(0,'rgba(6,182,212,.07)');cg.addColorStop(1,'rgba(0,0,0,0)');
+  c.fillStyle=cg;c.fillRect(0,0,W,H);
+
+  // Grid
+  c.strokeStyle='rgba(124,58,237,.05)';c.lineWidth=1;
+  for(let x=0;x<W;x+=40){c.beginPath();c.moveTo(x,0);c.lineTo(x,H);c.stroke();}
+  for(let y=0;y<H;y+=40){c.beginPath();c.moveTo(0,y);c.lineTo(W,y);c.stroke();}
+
+  // Outer border
+  c.strokeStyle='rgba(124,58,237,.65)';c.lineWidth=3;
+  rrect(c,18,18,W-36,H-36,22);c.stroke();
+  // Inner border
+  c.strokeStyle='rgba(6,182,212,.35)';c.lineWidth=1.5;
+  rrect(c,32,32,W-64,H-64,15);c.stroke();
+
+  // Corner ornaments
+  corn(c,58,58);corn(c,W-58,58,true);corn(c,58,H-58,false,true);corn(c,W-58,H-58,true,true);
+
+  // Snake
+  c.font='60px serif';c.textAlign='center';
+  c.fillText('🐍',W/2,112);
+
+  // Subtitle
+  c.font='bold 15px Arial, sans-serif';
+  c.fillStyle='rgba(167,139,250,.7)';
+  c.fillText('C E R T I F I C A T E   O F   C O M P L E T I O N',W/2,152);
+
+  // Divider
+  divider(c,W/2,170,330);
+
+  // "يشهد بأن"
+  c.font='22px Cairo, sans-serif';c.fillStyle='rgba(148,163,184,.9)';
+  c.fillText('هذا يشهد بأن الطالب / الطالبة',W/2,212);
+
+  // Name
+  const fs=sName.length>22?36:44;
+  c.font=`bold ${fs}px Cairo, sans-serif`;
+  const ng=c.createLinearGradient(W/2-280,0,W/2+280,0);
+  ng.addColorStop(0,'#a78bfa');ng.addColorStop(.5,'#06b6d4');ng.addColorStop(1,'#10b981');
+  c.fillStyle=ng;c.fillText(sName,W/2,272);
+
+  // Grade & School
+  c.font='19px Cairo, sans-serif';c.fillStyle='rgba(148,163,184,.85)';
+  c.fillText(sGrade + '  |  ' + sSchool,W/2,306);
+
+  divider(c,W/2,322,250);
+
+  // Body
+  c.font='18px Cairo, sans-serif';c.fillStyle='rgba(226,232,240,.9)';
+  c.fillText('قد أتم بنجاح اختبار مراجعة لغة البرمجة Python',W/2,362);
+
+  const lvlN={easy:'المستوى المبتدئ 🌱',medium:'المستوى المتوسط ⚡',hard:'المستوى المتقدم 🔥'};
+  c.font='bold 23px Cairo, sans-serif';c.fillStyle='#a78bfa';
+  c.fillText(lvlN[curLvl],W/2,400);
+
+  // Score box
+  const pct=Math.round(fSc/fTot*100);
+  const bx=W/2-170,by=420,bw=340,bh=76;
+  c.fillStyle='rgba(124,58,237,.15)';rrect(c,bx,by,bw,bh,13);c.fill();
+  c.strokeStyle='rgba(124,58,237,.45)';c.lineWidth=1.5;rrect(c,bx,by,bw,bh,13);c.stroke();
+  c.font='bold 34px Cairo, sans-serif';c.fillStyle='#10b981';
+  c.fillText(`${fSc} / ${fTot}`,W/2,by+44);
+  c.font='14px Cairo, sans-serif';c.fillStyle='rgba(148,163,184,.8)';
+  c.fillText(`النسبة: ${pct}%   —   التقدير: ${grade(pct)}`,W/2,by+66);
+
+  // Date
+  const now=new Date();
+  const ds=now.toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric'});
+  c.font='14px Cairo, sans-serif';c.fillStyle='rgba(148,163,184,.55)';
+  c.fillText(`تاريخ الإصدار: ${ds}`,W/2,544);
+
+  divider(c,W/2,562,380);
+
+  // Topics
+  c.font='12px Fira Code, monospace';c.fillStyle='rgba(124,58,237,.6)';
+  c.fillText('if/else  ·  for in list  ·  for in string  ·  datetime  ·  random',W/2,585);
+
+  // Stars
+  const starX=[W/2-200,W/2-100,W/2,W/2+100,W/2+200];
+  starX.forEach((sx,i)=>{
+    const filled=pct>=(i+1)*20;
+    c.font=(filled?'22':'15')+'px serif';
+    c.fillStyle=filled?'#f59e0b':'rgba(255,255,255,.15)';
+    c.fillText('★',sx,622);
+  });
+
+  // Seal
+  seal(c,W-118,H-110);
+
+  // Student icon on left bottom
+  c.font='bold 13px Cairo, sans-serif';
+  c.fillStyle='rgba(167,139,250,.5)';
+  c.textAlign='left';
+  c.fillText('🎓 Python Review Quiz',48,H-45);
+  c.textAlign='center';
+}
+
+function grade(p){
+  if(p===100)return'A+';if(p>=90)return'A';if(p>=80)return'B+';
+  if(p>=70)return'B';if(p>=60)return'C';if(p>=50)return'D';return'F';
+}
+
+function rrect(c,x,y,w,h,r){
+  c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);
+  c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);
+  c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath();
+}
+
+function divider(c,cx,y,hw){
+  const g=c.createLinearGradient(cx-hw,y,cx+hw,y);
+  g.addColorStop(0,'rgba(124,58,237,0)');g.addColorStop(.3,'rgba(124,58,237,.5)');
+  g.addColorStop(.5,'rgba(6,182,212,.85)');g.addColorStop(.7,'rgba(124,58,237,.5)');
+  g.addColorStop(1,'rgba(124,58,237,0)');
+  c.strokeStyle=g;c.lineWidth=1.5;
+  c.beginPath();c.moveTo(cx-hw,y);c.lineTo(cx+hw,y);c.stroke();
+  c.fillStyle='#06b6d4';c.save();c.translate(cx,y);c.rotate(Math.PI/4);
+  c.fillRect(-4,-4,8,8);c.restore();
+}
+
+function corn(c,x,y,fx=false,fy=false){
+  c.save();c.translate(x,y);
+  if(fx)c.scale(-1,1);if(fy)c.scale(1,-1);
+  c.strokeStyle='rgba(124,58,237,.5)';c.lineWidth=2;
+  c.beginPath();c.moveTo(0,0);c.lineTo(32,0);c.stroke();
+  c.beginPath();c.moveTo(0,0);c.lineTo(0,32);c.stroke();
+  c.fillStyle='rgba(167,139,250,.8)';c.beginPath();c.arc(0,0,4,0,Math.PI*2);c.fill();
+  c.restore();
+}
+
+function seal(c,cx,cy){
+  c.strokeStyle='rgba(245,158,11,.65)';c.lineWidth=2.5;
+  c.beginPath();c.arc(cx,cy,50,0,Math.PI*2);c.stroke();
+  c.strokeStyle='rgba(245,158,11,.3)';c.lineWidth=1;
+  c.beginPath();c.arc(cx,cy,42,0,Math.PI*2);c.stroke();
+  c.fillStyle='rgba(245,158,11,.06)';c.beginPath();c.arc(cx,cy,42,0,Math.PI*2);c.fill();
+  c.font='26px serif';c.textAlign='center';c.fillText('⭐',cx,cy+5);
+  c.font='bold 9px Cairo, sans-serif';c.fillStyle='rgba(245,158,11,.8)';
+  c.fillText('شهادة إتمام',cx,cy+22);c.fillText('Python',cx,cy-30);
+}
+
+function dlCert(){
+  const cv=document.getElementById('cert-canvas');
+  const lnk=document.createElement('a');
+  const lvlN={easy:'مبتدئ',medium:'متوسط',hard:'متقدم'};
+  lnk.download=`شهادة-${sName}-${lvlN[curLvl]}.png`;
+  lnk.href=cv.toDataURL('image/png');
+  lnk.click();
+}
+
+function confetti(){
+  const cols=['#7c3aed','#06b6d4','#10b981','#f59e0b','#ef4444','#a78bfa','#f472b6'];
+  for(let i=0;i<60;i++){
+    const d=document.createElement('div');d.className='confetti-piece';
+    d.style.left=Math.random()*100+'vw';d.style.top='-20px';
+    d.style.background=cols[Math.floor(Math.random()*cols.length)];
+    d.style.width=(Math.random()*10+6)+'px';d.style.height=(Math.random()*10+6)+'px';
+    d.style.animationDelay=(Math.random()*2)+'s';d.style.animationDuration=(Math.random()*2+2)+'s';
+    document.body.appendChild(d);setTimeout(()=>d.remove(),5000);
+  }
+}
+</script>
+</body>
+</html>
